@@ -10,4 +10,4 @@ notificationRouter.post('/', createNotification);
 notificationRouter.delete('/id=:id', deleteNotificationById);
 notificationRouter.delete('/recipientId=:recipientId', deleteNotificationsForRecipient);
 
-module.exports = notificationRouterRouter;
+module.exports = notificationRouter;

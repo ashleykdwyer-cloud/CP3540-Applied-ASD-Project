@@ -9,6 +9,10 @@ const UserSchema = mongoose.Schema ({
                         type: String,
                         required: true
                     },
+                    skillSet: {
+                        type: String,
+                        required: true
+                    },
                     passwordHash: {
                         type: String,
                         required: true

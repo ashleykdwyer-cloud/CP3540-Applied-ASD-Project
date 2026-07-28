@@ -1,17 +1,15 @@
 const express = require('express');
+const notificationRoute = require("./routes/notification.route.js");
+const taskRoute = require("./routes/task.route.js");
+const timelogRoute = require("./routes/timelog.route.js");
+const userRoute = require("./routes/user.route.js");
+const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-
-const notificationRoute = require("./routes/notification.route.js");
-const taskRoute = require("./routes/task.route.js");
-const timelogRoute = require("./routes/timelog.route.js");
-const userRoute = require("./routes/user.route.js");
-const app = express();
-
 app.use("/api/notifications", notificationRoute);
 app.use("/api/tasks", taskRoute);
 app.use("/api/timelogs", timelogRoute);
