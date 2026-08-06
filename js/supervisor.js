@@ -897,7 +897,7 @@ function displayNotifications() {
     if (!Array.isArray(notifications)) {
         notificationList.innerHTML = `
             <p class="error-message">
-                The notificatio information is invalid.
+                The notification information is invalid.
             </p>
         `;
 
