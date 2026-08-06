@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Dashboard</title>
+
+    <link rel="stylesheet" href="../css/worker-dashboard.css">
+</head>
+
+<body>
+    
+    <header class="header">
+
+        <div>
+            <h1>Worker Dashboard</h1>
+            <p id="welcomeMessage"></p>
+        </div>
+
+        <div class="header-right">
+            <button id="logoutButton" class="logout-button">Logout</button>
+        </div>
+
+    </header>
+
+    <section class="summary-container">
+
+        <div class="summary-card">
+            <h3>Hours Today</h3>
+            <h2 id="hoursToday">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Assigned Tasks</h3>
+            <h2 id="assignedTasks">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Completed Today</h3>
+            <h2 id="completedTasks">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Status</h3>
+            <select id="workerStatus">
+                <option>Available</option>
+                <option>Working</option>
+                <option>Break</option>
+                <option>Off Shift</option>
+            </select>
+        </div>
+
+    </section>
+
+    <main class="dashboard-grid">
+
+        <section>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h2>Today's Tasks</h2>
+                    <input type="search" id="searchTasks" placeholder="Search">
+                </div>
+
+                <div id="taskList">
+                </div>
+
+            </div>
+
+        </section>
+
+        <aside>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h2>Notifications</h2>
+                </div>
+
+                <div id="notificationList">
+                </div>
+
+            </div>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h2>Time Logs</h2>
+                </div>
+
+                <div id="timeLogList">
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- Task Template -->
+
+    <template id="taskTemplate">
+
+        <div class="task-card">
+
+            <div class="task-header">
+                <h3 class="task-title"></h3>
+                <span class="task-status"></span>
+            </div>
+
+            <p class="task-description"></p>
+            <p class="task-priority"></p>
+            <p class="task-supervisor"></p>
+
+            <div class="task-buttons">
+                <button class="start-btn">Start</button>
+                <button class="complete-btn">Complete</button>
+            </div>
+
+        </div>
+
+    </template>
+
+    <!-- Notification Template -->
+
+    <template id="notificationTemplate">
+
+        <div class="notification-card">
+            <p class="notification-message"></p>
+            <small class="notification-date"></small>
+        </div>
+
+    </template>
+
+    <!-- Time Log Template -->
+
+    <template id="timeLogTemplate">
+
+        <div class="timelog-card">
+            <h4 class="timelog-task"></h4>
+            <p class="timelog-hours"></p>
+            <p class="timelog-date"></p>
+        </div>
+
+    </template>
+
+    <script src="../js/worker.js"></script>
+
+</body>
+</html>
