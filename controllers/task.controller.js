@@ -43,9 +43,21 @@ const deleteTaskById = async(req, res) => {
     }
 };
 
+// retrieve all tasks
+const getAllTasks = async(req, res) => {
+    try {
+        const tasks = await Task.find({});
+        res.status(200).json(tasks);
+    }
+    catch (err) {
+        res.status(500).json({message: err.message });
+    }
+};
+
 module.exports = {
     createTask,
     getTaskById,
     updateTaskById,
-    deleteTaskById
+    deleteTaskById,
+    getAllTasks
 };
