@@ -64,6 +64,7 @@ const deleteUserById = async(req, res) => {
         res.status(500).json({ message: err.message});
     }
 };
+
 // retrieve all users
 const getAllUsers = async(req, res) => {
     try {

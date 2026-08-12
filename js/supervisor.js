@@ -25,7 +25,6 @@ if (!loggedInUser || loggedInUser.role !== "supervisor") {
 
 
 //HTML element references
-const loggedInUserElement = document.getElementById("loggedInUser");
 const logoutButton = document.getElementById("logoutButton");
 
 
@@ -33,12 +32,12 @@ const logoutButton = document.getElementById("logoutButton");
 const totalTasksElement = document.getElementById("totalTasks");
 const activeTasksElement = document.getElementById("activeTasks");
 const completedTasksElement = document.getElementById("completedTasks");
-const availableWorkersElement = document.getElementById("availableWorkers");
+const availableWorkersElement = document.getElementById("availableEmployees");
 
 //Task form elements
 const taskForm = document.getElementById("taskForm");
 const taskNumberInput = document.getElementById("taskNumber");
-const descriptionInput = document.getElementById("description");
+const descriptionInput = document.getElementById("taskDescription");
 const requiredSkillSelect = document.getElementById("requiredSkill");
 const workerSelect = document.getElementById("workerId");
 const taskMessage = document.getElementById("taskMessage");
@@ -189,7 +188,7 @@ async function loadNotifications() {
         } catch (error) {
             console.error("Notification loading error:", error);
         
-            notificiations = [];
+            notifications = [];
 
             notificationList.innerHTML= `
             <p class="error-message"> 
@@ -1068,7 +1067,12 @@ function displayTimeLogs() {
         taskElement.textContent =
             `Task #${timeLog.taskNumber}`;
 
-        
+        const duration =
+            timeLog.startTime && timeLog.endTime
+                ? (new Date(timeLog.endTime) - new Date(timeLog.startTime))
+                / (1000 * 60 * 60)
+                : null;
+
         hoursElement.textContent =
             duration !== null
                 ? `Time worked: ${duration} hours`
@@ -1217,7 +1221,7 @@ function formatDateTime(value) {
     );
 }
 
-function escapeHtml(value) {
+function escapeHTML(value) {
     return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")

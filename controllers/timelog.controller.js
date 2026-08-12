@@ -43,9 +43,21 @@ const updateTimeLogById = async(req, res) => {
     }
 };
 
+// retrieve all timelogs
+const getAllTimeLogs = async(req, res) => {
+    try {
+        const timelogs = await TimeLog.find({});
+        res.status(200).json(timelogs);
+    }
+    catch (err) {
+        res.status(500).json({message: err.message });
+    }
+};
+
 module.exports = {
     createTimeLog,
     getTimeLogById,
     getTimeLogsForWorker,
-    updateTimeLogById
+    updateTimeLogById,
+    getAllTimeLogs
 };
