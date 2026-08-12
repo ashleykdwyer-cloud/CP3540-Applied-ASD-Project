@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Dashboard</title>
+
+    <link rel="stylesheet" href="../css/supervisor-dashboard.css">
+</head>
+<body>
+    <header class="header">
+        <div>
+            <h1>Supervisor Dashboard</h1>
+        </div>
+
+    <div class="header-right">
+        <button id="logoutButton" class="logout-button">Logout</button> 
+    </div>
+    </header>
+
+    <section class="summary-container">
+        <div class="summary-card">
+            <h3>Total Tasks</h3>
+            <h2 id="totalTasks">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Active Tasks</h3>
+            <h2 id="activeTasks">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Completed Tasks</h3>
+            <h2 id="completedTasks">0</h2>
+        </div>
+
+        <div class="summary-card">
+            <h3>Available Employees</h3>
+            <h2 id="availableEmployees">0</h2>
+        </div>
+    </section>
+
+    <main class="dashboard-grid">
+        <section>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Create New Work Order</h3>
+                </div>
+                <form id="taskForm">
+
+                    <label for="taskNumber">Work Order:</label>
+                    <input type="number" id="taskNumber" required>
+
+                    <label for="taskDescription">Description:</label>
+                    <textarea id="taskDescription" rows="4" required></textarea>
+
+                    <label for="requiredSkill">Required Skill</label>
+
+                    <select id="requiredSkill" required>
+
+                        <option value="">Select Skill</option>
+
+                        <option>Electrical</option>
+
+                        <option>Mechanical</option>
+
+                        <option>Heavy Equipment</option>
+
+                        <option>Safety</option>
+
+                    </select>
+
+                    <label for="workerId">Assign Worker</label>
+
+                    <select id="workerId" required>
+
+                        <option value="">Select Worker</option>
+
+                    </select>
+
+                    <button type="submit" class="primary-btn">Assign Task</button>
+
+                    <p id="taskMessage"></p>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Current Tasks</h2>
+
+                    <input type="search" id="searchTasks" placeholder="Search">
+                </div>
+            
+                <div id="taskList">
+
+                </div>
+            </div>
+        </section>
+
+        <aside>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Workers</h2>
+                </div>
+                <div id="workerList">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Notifications</h2>
+                </div>
+                <div id="notificationList">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Time Logs</h2>
+                </div>
+                <div id="timeLogList    ">
+                </div>
+            </div>
+        </aside>
+    </main>
+
+     <template id="taskTemplate">
+
+        <div class="task-card">
+            <div class="task-header">
+                <h3 class="task-number"></h3>
+
+                <span class="task-status"></span>
+            </div>
+
+            <p class="task-description"></p>
+
+            <div class="task-worker"></div>
+            <div class="task-buttons">
+                <button class="complete-btn">Complete</button>
+
+                <button class="delete-btn">Delete</button>
+            </div>
+        </div>
+    </template>
+
+    <template id="workerTemplate">
+
+        <div class="worker-card">
+            <h3 class="worker-name"></h3>
+
+            <p class="worker-skill"></p>
+
+            <p class="worker-status"></p>
+        </div>
+
+    </template>
+
+    <template id="notificationTemplate">
+
+        <div class="notification-card">
+            <p class="notification-message"></p>
+
+            <small class="notification-date"></small>
+        </div>
+
+    </template>
+
+    <template id="timeLogTemplate">
+
+        <div class="timelog-card">
+            <h4 class="timelog-worker"></h4>
+
+            <p class="timelog-task"></p>
+
+            <p class="timelog-hours"></p>
+        </div>
+
+    </template>
+
+    <script src="../js/supervisor.js"></script>
+
+</body>
+</html>

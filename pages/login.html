@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mining Task Manager</title>
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+
+    <div class="overlay">
+        <div class="login-container">
+            <h1>Mining Task Manager</h1>
+            <p class="subtitle">Sign in to continue</p>
+            <form id="loginForm">
+                <label>Username</label>
+                <input 
+                    type="text"
+                    id="username"
+                    placeholder="Enter username"
+                    required>
+
+                <label>Password</label>
+
+                <div class="password-box">
+                    <input 
+                        type="password"
+                        id="password"
+                        placeholder="Enter password"
+                        required>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        aria-label="Show password">
+                        <svg
+                            id="eyeIcon"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="22"
+                            height="22"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+                            <circle cx="12" cy="12" r="3"/>
+
+                        </svg>
+                        
+                    </button>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-btn">
+                    Login
+                </button>
+
+                <p id="errorMessage"></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+<script src="/js/login.js"></script>
+
+</body>
+</html>

@@ -25,7 +25,7 @@ let timeLogs = [];
 
 const loggedInUser = getLoggedInUser();
 if (!loggedInUser || loggedInUser.role !== "worker") {
-    window.location.href = "/login.html";
+    window.location.href = "login.html";
 }
 
 const welcomeMessage = document.getElementById("welcomeMessage");
