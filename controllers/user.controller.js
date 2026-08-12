@@ -76,6 +76,38 @@ const getAllUsers = async(req, res) => {
     }
 };
 
+// login user
+const login = async (req, res) => {
+    try {
+        const { userName, password } = req.body;
+        const user = await User.findOne({ userName: userName });
+
+        if (!user) {
+            return res.status(401).json({
+                message: "Invalid username or password."
+            });
+        }
+
+        if (password !== user.passwordHash) {
+            return res.status(401).json({
+                message: "Invalid username or password."
+            });
+        }
+
+        //only return the information the frontend needs
+        res.status(200).json({
+            userId: user.userId,
+            userName: user.userName,
+            role: user.role
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+};
+
 module.exports = {
     createUser,
     getUserById,
@@ -83,5 +115,6 @@ module.exports = {
     getUsersByRole,
     updateUserById,
     deleteUserById,
-    getAllUsers
+    getAllUsers,
+    login
 };

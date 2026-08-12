@@ -1,3 +1,6 @@
+"use strict";
+console.log("login.js loaded");
+
 const form = document.getElementById("loginForm");
 const password = document.getElementById("password");
 const toggle = document.getElementById("togglePassword");
@@ -17,8 +20,8 @@ const eyeClosed = `
 
 eyeIcon.innerHTML = eyeOpen;
 
+// show / hide password
 toggle.addEventListener("click", () => {
-// remove placeholder name and password once connected to backend
     if (password.type === "password") {
 
         password.type = "text";
@@ -35,21 +38,84 @@ toggle.addEventListener("click", () => {
 
 });
 
-form.addEventListener("submit", (e) => {
+// login
+form.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
+    alert("preventDefault was executed");
+
+    console.log("Login form submitted");
+
+    const username = document.getElementById("username").value.trim();
     const passwordValue = password.value;
-// remove placeholder username and password once connected to backend
-    if (username === "admin" && passwordValue === "password") {
 
-        window.location.href = "pages/dashboard.html";
+    console.log("Sending login request...");
 
-    } else {
+    if (!username || !passwordValue) {
+        error.textContent = "Please enter your username and password."
+        return;
+    }
 
-        error.textContent = "Invalid username or password.";
+    try {
 
+        const response = await fetch("/api/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                userName: username,
+                password: passwordValue
+            })
+        });
+
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(
+                result.message || "Invalid username or password."
+            );
+        }
+
+        //store logged in user info 
+        const loggedInUser = {
+            userId: result.userId,
+            userName: result.userName,
+            role: result.role
+        };
+
+        localStorage.setItem(
+            "loggedInUser",
+            JSON.stringify(loggedInUser)
+        );
+
+        //redirect based on user role
+        switch (loggedInUser.role) {
+
+            case "worker":
+                window.location.href = "/worker-dashboard.html";
+                break;
+
+            case "supervisor":
+                window.location.href = "/supervisor-dashboard.html";
+                break;
+
+            case "administrator":
+                window.location.href = "/admin.html";
+                break;
+
+            default:
+                localStorage.removeItem("loggedInUser");
+                error.textContent = "Your account has an invalid role.";
+                break;
+        }
+
+    } catch (err) {
+        console.error("Login error:", err);
+
+        error.textContent = err.message || "Unable to log in.";
     }
 
 });

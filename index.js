@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("path")
 const notificationRoute = require("./routes/notification.route.js");
 const taskRoute = require("./routes/task.route.js");
 const timelogRoute = require("./routes/timelog.route.js");
@@ -7,6 +8,10 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 const port = 3000;
+
+app.use(express.static(path.join(__dirname, "pages")));
+app.use("/js", express.static(path.join(__dirname, "js")));
+app.use("/css", express.static(path.join(__dirname, "css")));
 
 app.use(cors());
 app.use(express.json());

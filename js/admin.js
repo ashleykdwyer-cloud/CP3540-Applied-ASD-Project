@@ -1,21 +1,36 @@
 const API = 'http://localhost:3000/api';
 
-// GET LOGGED IN USER FROM LOCALSTORAGE
-const userId   = localStorage.getItem('userId');
-const username = localStorage.getItem('username');
-const role     = localStorage.getItem('role');
+//get logged in user from localstorage
+const storedUser = localStorage.getItem("loggedInUser");
 
-// Redirect to login if not logged in
-if (!userId) {
-    window.location.href = 'login.html';
+if (!storedUser) {
+    window.location.href = "/login.html";
 }
 
-// Redirect if not admin
-if (role !== 'administrator') {
-    window.location.href = 'login.html';
+let loggedInUser;
+
+try {
+    loggedInUser = JSON.parse(storedUser);
+} catch (error) {
+    console.error("Invalid logged-in user data.");
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "/login.html";
 }
 
-document.getElementById('navUsername').textContent = username || 'Admin';
+// Redirect if not administrator
+if (
+    !loggedInUser ||
+    loggedInUser.role !== "administrator"
+) {
+    window.location.href = "/login.html";
+}
+
+const userId = loggedInUser.userId;
+const username = loggedInUser.userName;
+const role = loggedInUser.role;
+
+document.getElementById("navUsername").textContent =
+    username || "Admin";
 
 // Store all users for filtering
 let allUsers = [];
@@ -213,6 +228,6 @@ const capitalise = (str) => {
 };
 
 const logout = () => {
-    localStorage.clear();
-    window.location.href = 'login.html';
+    localStorage.removeItem("loggedInUser");
+    window.location.href = '/login.html';
 };

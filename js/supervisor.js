@@ -20,8 +20,9 @@ let timeLogs = [];
 const loggedInUser = getLoggedInUser();
 
 if (!loggedInUser || loggedInUser.role !== "supervisor") {
-    window.location.href = "/login.html";
+    window.location.href = "login.html";
 }
+
 
 //HTML element references
 const logoutButton = document.getElementById("logoutButton");
