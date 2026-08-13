@@ -1098,6 +1098,18 @@ function displayTimeLogs() {
     });
 }
 
+//Task form messages
+function clearTaskMessage() {
+    taskMessage.textContent = "";
+    taskMessage.className = "";
+}
+
+function showTaskMessage(message, type) {
+    taskMessage.textContent = message;
+    taskMessage.className = type;
+}
+
+
 //Summary cards
 function updateSummaryCards() {
     const totalTasks =
