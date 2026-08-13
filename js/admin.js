@@ -51,9 +51,21 @@ const loadUsers = async () => {
     } catch (err) {
         console.error('Failed to load users:', err);
         document.getElementById('userTableBody').innerHTML =
-            '<tr><td colspan="5" class="empty-row">Failed to load users.</td></tr>';
+            '<tr><td colspan="6" class="empty-row">Failed to load users.</td></tr>';
     }
 };
+
+const createRole = document.getElementById("createRole");
+const createSkill = document.getElementById("createSkill");
+
+createRole.addEventListener("change", () => {
+    if (createRole.value === "worker") {
+        createSkill.disabled = false;
+    } else {
+        createSkill.value = "N/A";
+        createSkill.disabled = true;
+    }
+});
 
 // UPDATE SUMMARY CARDS
 const updateSummaryCards = (users) => {
@@ -70,13 +82,14 @@ const updateSummaryCards = (users) => {
 const renderUsers = (users) => {
     const tbody = document.getElementById('userTableBody');
     if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No users found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No users found.</td></tr>';
         return;
     }
     tbody.innerHTML = users.map(user => `
         <tr>
             <td>${user.name || '—'}</td>
             <td style="color:#718096">${user.userName || '—'}</td>
+            <td>${user.skillSet || 'N/A'}</td>
             <td><span class="role-badge role-${user.role}">${capitalise(user.role)}</span></td>
             <td><span class="status-badge status-${user.status}">${user.status || 'Available'}</span></td>
             <td>
@@ -107,7 +120,11 @@ const openCreateModal = () => {
     document.getElementById('createName').value = '';
     document.getElementById('createUsername').value = '';
     document.getElementById('createPassword').value = '';
-    document.getElementById('createRole').value = 'worker';
+    
+    createRole.value = 'worker';
+    createSkill.value = 'N/A';
+    createSkill.disabled = false;
+
     document.getElementById('createError').textContent = '';
     document.getElementById('createModal').classList.remove('hidden');
 };
@@ -117,6 +134,7 @@ const createUser = async () => {
     const uname    = document.getElementById('createUsername').value.trim();
     const password = document.getElementById('createPassword').value.trim();
     const userRole = document.getElementById('createRole').value;
+    const userSkill = document.getElementById('createSkill').value;
     const errorEl  = document.getElementById('createError');
 
     if (!name || !uname || !password) {
@@ -132,7 +150,7 @@ const createUser = async () => {
                 name: name,
                 userName: uname,
                 passwordHash: password,
-                skillSet: 'N/A',
+                skillSet: userRole === "worker" ? userSkill : "N/A",
                 status: 'Available',
                 role: userRole,
                 userId: Date.now()
