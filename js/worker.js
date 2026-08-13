@@ -24,6 +24,7 @@ let notifications = [];
 let timeLogs = [];
 
 const loggedInUser = getLoggedInUser();
+
 if (!loggedInUser || loggedInUser.role !== "worker") {
     window.location.href = "login.html";
 }
@@ -39,10 +40,8 @@ const notificationList = document.getElementById("notificationList");
 const timeLogList = document.getElementById("timeLogList")
 
 logoutButton.addEventListener("click", logout);
-statusSelect.addEventListener("change, updateWorkerStatus");
-startButton/addEventListener("click", () => {
-    startTask(task._id);
-});
+statusSelect.addEventListener("change", updateWorkerStatus);
+
 
 initializeDashboard();
 async function initializeDashboard() {
@@ -62,7 +61,7 @@ async function loadDashboardData() {
 
 function displayLoggedInWorker() {
     const workerName = loggedInUser.userName || "Worker";
-    welcomgMessage.textContent = `Welcome, ${workerName}`;
+    welcomeMessage.textContent = `Welcome, ${workerName}`;
 }
 
 //Loading tasks
@@ -190,6 +189,27 @@ async function completeTask(taskId) {
         );
 
         window.alert(error.message);
+    }
+}
+
+function getLoggedInUser(){
+    const savedUser = localStorage.getItem("loggedInUser");
+
+    if (!savedUser) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(savedUser);
+
+    } catch (error) {
+        console.error("Unable to find login information", error);
+
+        localStorage.removeItem(
+            "loggedInUser"
+        );
+
+        return null;
     }
 }
 
@@ -414,6 +434,7 @@ function displayNotifications() {
             );
         }
     );
+    }
 
 //Display time logs - most recent time logs
 function displayTimeLogs() {
@@ -600,4 +621,3 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
-}

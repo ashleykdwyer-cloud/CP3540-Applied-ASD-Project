@@ -26,7 +26,7 @@ if (!loggedInUser || loggedInUser.role !== "supervisor") {
 
 //HTML element references
 const logoutButton = document.getElementById("logoutButton");
-
+const loggedInUserElement = document.getElementById("loggedInUser");
 
 //Summary card elements
 const totalTasksElement = document.getElementById("totalTasks");
@@ -69,8 +69,6 @@ initializeDashboard();
 
 async function initializeDashboard() {
     displayLoggedInSupervisor();
-
-    setLoadingMessage();
 
     await loadDashboardData();
 }
