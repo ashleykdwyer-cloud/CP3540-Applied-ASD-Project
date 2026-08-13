@@ -43,8 +43,6 @@ form.addEventListener("submit", async (e) => {
 
     e.preventDefault();
 
-    alert("preventDefault was executed");
-
     console.log("Login form submitted");
 
     const username = document.getElementById("username").value.trim();

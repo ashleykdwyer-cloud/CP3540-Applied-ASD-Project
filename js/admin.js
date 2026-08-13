@@ -75,7 +75,7 @@ const renderUsers = (users) => {
     }
     tbody.innerHTML = users.map(user => `
         <tr>
-            <td>${user.userName || '—'}</td>
+            <td>${user.name || '—'}</td>
             <td style="color:#718096">${user.userName || '—'}</td>
             <td><span class="role-badge role-${user.role}">${capitalise(user.role)}</span></td>
             <td><span class="status-badge status-${user.status}">${user.status || 'Available'}</span></td>
@@ -129,6 +129,7 @@ const createUser = async () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+                name: name,
                 userName: uname,
                 passwordHash: password,
                 skillSet: 'N/A',
