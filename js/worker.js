@@ -40,7 +40,7 @@ const notificationList = document.getElementById("notificationList");
 const timeLogList = document.getElementById("timeLogList")
 
 logoutButton.addEventListener("click", logout);
-statusSelect.addEventListener("change", updateWorkerStatus);
+//statusSelect.addEventListener("change", updateWorkerStatus);
 
 
 initializeDashboard();
