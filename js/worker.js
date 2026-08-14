@@ -11,17 +11,23 @@ const API = {
     timeLogs: (workerId) =>
         `/api/timelogs/workerId=${workerId}`,
 
+    checkIns: (workerId) =>
+        `/api/checkins/worker/${workerId}`,
+
+    completeCheckIn: (checkInId) =>
+        `/api/checkins/${checkInId}`,
+
     updateTask: (taskId) =>
         `/api/tasks/id=${taskId}`,
 
     updateStatus: (workerId) =>
         `/api/users/id=${workerId}`
-
 };
 
 let tasks = [];
 let notifications = [];
 let timeLogs = [];
+let checkIns = [];
 
 const loggedInUser = getLoggedInUser();
 
@@ -38,6 +44,8 @@ const statusSelect = document.getElementById("workerStatus");
 const taskList = document.getElementById("taskList");
 const notificationList = document.getElementById("notificationList");
 const timeLogList = document.getElementById("timeLogList")
+const checkInList = document.getElementById("checkInList");
+const checkInTemplate = document.getElementById("checkInTemplate")
 
 logoutButton.addEventListener("click", logout);
 statusSelect.addEventListener("change", updateWorkerStatus);
@@ -46,7 +54,6 @@ statusSelect.addEventListener("change", updateWorkerStatus);
 initializeDashboard();
 async function initializeDashboard() {
     displayLoggedInWorker();
-    setLoadingMessage();
     await loadDashboardData();
 }
 
@@ -54,9 +61,97 @@ async function loadDashboardData() {
     await Promise.all([
         loadTasks(),
         loadNotifications(),
-        loadTimeLogs()
+        loadTimeLogs(),
+        loadCheckIns()
     ]);
     updateSummaryCards();
+}
+
+// Update worker summary cards
+function updateSummaryCards() {
+
+    const assignedTasks =
+        tasks.filter(
+            (task) =>
+                task.isCompleted !== true &&
+                task.status !== "Completed"
+        ).length;
+
+    const completedTasks =
+        tasks.filter(
+            (task) =>
+                task.isCompleted === true ||
+                task.status === "Completed"
+        ).length;
+
+    let hoursToday = 0;
+
+    timeLogs.forEach((timeLog) => {
+
+        const duration =
+            timeLog.duration ??
+            (
+                timeLog.startTime &&
+                timeLog.endTime
+                    ? (
+                        new Date(timeLog.endTime) -
+                        new Date(timeLog.startTime)
+                    ) / (1000 * 60 * 60)
+                    : 0
+            );
+
+        if (duration) {
+            hoursToday += Number(duration);
+        }
+    });
+
+    assignedTaskElement.textContent =
+        assignedTasks;
+
+    completedTasksElement.textContent =
+        completedTasks;
+
+    hoursTodayElement.textContent =
+        hoursToday.toFixed(1);
+}
+
+// Update worker status
+async function updateWorkerStatus() {
+    const newStatus = statusSelect.value;
+
+    try {
+        const response = await fetch(
+            API.updateStatus(loggedInUser.userId),
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            }
+        );
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "Worker status could not be updated."
+            );
+        }
+
+        console.log("Worker status updated:", newStatus);
+
+    } catch (error) {
+        console.error(
+            "Status update error:",
+            error
+        );
+
+        alert(error.message);
+    }
 }
 
 function displayLoggedInWorker() {
@@ -88,10 +183,109 @@ async function loadTasks() {
 
         taskList.innerHTML = `
             <p class="error-message">
-            ${escapeHTML(error.message)}
+            ${escapeHtml(error.message)}
             </p>
         `;
     }
+}
+
+// Load check-in requests for the logged-in worker
+async function loadCheckIns() {
+    try {
+        const response = await fetch(
+            API.checkIns(loggedInUser.userId)
+        );
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "Check-in requests could not be loaded."
+            );
+        }
+
+        checkIns = result;
+
+        displayCheckIns();
+
+    } catch (error) {
+        console.error(
+            "Check-in loading error:",
+            error
+        );
+
+        checkIns = [];
+
+        checkInList.innerHTML = `
+            <p class="error-message">
+                ${escapeHtml(error.message)}
+            </p>
+        `;
+    }
+}
+
+// Display check-in requests
+function displayCheckIns() {
+    checkInList.innerHTML = "";
+
+    if (!Array.isArray(checkIns)) {
+        checkInList.innerHTML = `
+            <p class="error-message">
+                The check-in information is invalid.
+            </p>
+        `;
+
+        return;
+    }
+
+    const pendingCheckIns = checkIns.filter(
+        (checkIn) =>
+            normalizeText(checkIn.status) === "pending"
+    );
+
+    if (pendingCheckIns.length === 0) {
+        checkInList.innerHTML = `
+            <p class="empty-message">
+                No pending check-in requests.
+            </p>
+        `;
+
+        return;
+    }
+
+    pendingCheckIns.forEach((checkIn) => {
+        const checkInCard = document.createElement("div");
+
+        checkInCard.className = "checkin-card";
+
+        checkInCard.innerHTML = `
+            <h3>Check-In Request</h3>
+
+            <p>
+                Your supervisor has requested a check-in.
+            </p>
+
+            <p class="checkin-time">
+                Requested:
+                ${formatDateTime(checkIn.requestedAt)}
+            </p>
+
+            <button class="checkin-button">
+                Check In
+            </button>
+        `;
+
+        const checkInButton =
+            checkInCard.querySelector(".checkin-button");
+
+        checkInButton.addEventListener(
+            "click",
+            () => completeCheckIn(checkIn._id)
+        );
+
+        checkInList.appendChild(checkInCard);
+    });
 }
 
 //Start task
@@ -185,6 +379,52 @@ async function completeTask(taskId) {
     } catch (error) {
         console.error(
             "Task completion error:",
+            error
+        );
+
+        window.alert(error.message);
+    }
+}
+
+// Complete a check-in request
+async function completeCheckIn(checkInId) {
+    if (!checkInId) {
+        window.alert(
+            "The check-in request ID is missing."
+        );
+
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            API.completeCheckIn(checkInId),
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "The check-in could not be completed."
+            );
+        }
+
+        window.alert(
+            "Check-in completed successfully."
+        );
+
+        await loadCheckIns();
+
+    } catch (error) {
+        console.error(
+            "Check-in completion error:",
             error
         );
 
@@ -334,6 +574,42 @@ function displayTasks(taskData) {
     });
 }
 
+// Load notifications
+async function loadNotifications() {
+    try {
+        const response = await fetch(
+            API.notifications(loggedInUser.userId)
+        );
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "Notifications could not be loaded."
+            );
+        }
+
+        notifications = result;
+
+        displayNotifications();
+
+    } catch (error) {
+        console.error(
+            "Notification loading error:",
+            error
+        );
+
+        notifications = [];
+
+        notificationList.innerHTML = `
+            <p class="error-message">
+                ${escapeHtml(error.message)}
+            </p>
+        `;
+    }
+}
+
 function displayNotifications() {
     notificationList.innerHTML = "";
 
@@ -435,6 +711,42 @@ function displayNotifications() {
         }
     );
     }
+
+// Load time logs for the logged-in worker
+async function loadTimeLogs() {
+    try {
+        const response = await fetch(
+            API.timeLogs(loggedInUser.userId)
+        );
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "Time logs could not be loaded."
+            );
+        }
+
+        timeLogs = result;
+
+        displayTimeLogs();
+
+    } catch (error) {
+        console.error(
+            "Time log loading error:",
+            error
+        );
+
+        timeLogs = [];
+
+        timeLogList.innerHTML = `
+            <p class="error-message">
+                ${escapeHtml(error.message)}
+            </p>
+        `;
+    }
+}
 
 //Display time logs - most recent time logs
 function displayTimeLogs() {

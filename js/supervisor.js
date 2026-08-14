@@ -6,6 +6,7 @@ const API = {
     workers: "/api/users/role=worker",
     notifications: (recipientId) => `/api/notifications/recipientId=${recipientId}`,
     timeLogs: "/api/timelogs",
+    checkIns: "/api/checkins",
     updateTask: (taskId) => `/api/tasks/id=${taskId}`,
     deleteTask: (taskId) => `/api/tasks/id=${taskId}`,
 };
@@ -120,6 +121,50 @@ async function loadWorkers() {
         `;
 
         populateWorkerSelect();
+    }
+}
+
+//Send a check-in request to a worker
+async function requestCheckIn(workerId) {
+    const supervisorId = Number(loggedInUser.userId);
+
+    if (!Number.isInteger(workerId)) {
+        window.alert("Invalid worker.");
+        return;
+    }
+
+    try {
+        const response = await fetch(API.checkIns, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                workerId: workerId,
+                supervisorId: supervisorId
+            })
+        });
+
+        const result = await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "The check-in request could not be sent."
+            );
+        }
+
+        window.alert(
+            "Check-in request sent successfully."
+        );
+
+    } catch (error) {
+        console.error(
+            "Check-in request error:",
+            error
+        );
+
+        window.alert(error.message);
     }
 }
 
@@ -808,6 +853,11 @@ function displayWorkers() {
                 ".worker-status"
             );
 
+        const checkInButton =
+            workerFragment.querySelector(
+                ".checkin-btn"
+            );
+
         workerNameElement.textContent = 
             worker.userName || "Unnamed worker";
 
@@ -822,6 +872,11 @@ function displayWorkers() {
                 worker.status ||
                 "Unknown"
             }`;
+
+        checkInButton.addEventListener(
+            "click",
+            () => requestCheckIn(Number(worker.userId))
+        );
 
         const normalizedStatus = 
             normalizeText(worker.status);
