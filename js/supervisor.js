@@ -363,7 +363,7 @@ if (!eligibility.eligible) {
     return;
 }
 
-const newTask = {taskNumber, description, workerId, requiredSkill, supervisorName: loggedInUser.userName, status: "Pending", isCompleted: false};
+const newTask = {taskNumber, description, workerId, supervisorId: loggedInUser.userId, supervisorName: loggedInUser.userName, requiredSkill, status: "Pending", isCompleted: false};
 
 const submitButton = taskForm.querySelector('button[type="submit"]');
 

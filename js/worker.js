@@ -21,7 +21,12 @@ const API = {
         `/api/tasks/id=${taskId}`,
 
     updateStatus: (workerId) =>
-        `/api/users/id=${workerId}`
+        `/api/users/id=${workerId}`,
+
+    comments: (taskId) =>
+        `/api/taskcomments/task/${taskId}`,
+
+    createComment: "/api/taskcomments"
 };
 
 let tasks = [];
@@ -453,6 +458,9 @@ function getLoggedInUser(){
 
 //Display tasks
 function displayTasks(taskData) {
+
+    console.log("NEW displayTasks is running");
+
     taskList.innerHTML = "";
 
     if (!Array.isArray(taskData)) {
@@ -514,6 +522,21 @@ function displayTasks(taskData) {
                 ".start-btn"
             );
 
+        const commentList =
+            taskFragment.querySelector(
+                ".comment-list"
+            );
+
+        const commentInput =
+            taskFragment.querySelector(
+                ".comment-input"
+            );
+
+        const commentButton =
+            taskFragment.querySelector(
+                ".comment-button"
+            );
+
         taskNumberElement.textContent = 
             `Task #${task.taskNumber}`;
         
@@ -522,6 +545,20 @@ function displayTasks(taskData) {
 
         taskWorkerElement.textContent =
             `Assigned by: ${task.supervisorName}`;
+
+        loadTaskComments(
+            task._id,
+            commentList
+        );
+
+        commentButton.addEventListener(
+            "click",
+            () => addTaskComment(
+                task._id,
+                commentInput,
+                commentList
+            )
+        );
 
         if (task.requiredSkill) {
             const skillElement = 
@@ -570,6 +607,175 @@ function displayTasks(taskData) {
 
         taskList.appendChild(taskFragment);
     });
+}
+
+async function loadTaskComments(taskId, commentList) {
+    try {
+        const response = await fetch(
+            API.comments(taskId)
+        );
+
+        const result =
+            await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "Comments could not be loaded."
+            );
+        }
+
+        displayTaskComments(
+            result,
+            commentList
+        );
+
+    } catch (error) {
+        console.error(
+            "Comment loading error:",
+            error
+        );
+
+        commentList.innerHTML = `
+            <p class="error-message">
+                ${escapeHtml(error.message)}
+            </p>
+        `;
+    }
+}
+
+function displayTaskComments(
+    comments,
+    commentList
+) {
+    commentList.innerHTML = "";
+
+    if (!Array.isArray(comments) ||
+        comments.length === 0) {
+
+        commentList.innerHTML = `
+            <p class="empty-message">
+                No comments yet.
+            </p>
+        `;
+
+        return;
+    }
+
+    comments.forEach((comment) => {
+
+        const commentElement =
+            document.createElement("div");
+
+        commentElement.className =
+            "task-comment";
+
+        const author =
+            document.createElement("strong");
+
+        author.textContent =
+            comment.userName || "Unknown user";
+
+        const message =
+            document.createElement("p");
+
+        message.textContent =
+            comment.comment;
+
+        const date =
+            document.createElement("small");
+
+        date.textContent =
+            formatDateTime(
+                comment.createdAt
+            );
+
+        commentElement.appendChild(author);
+        commentElement.appendChild(message);
+        commentElement.appendChild(date);
+
+        commentList.appendChild(
+            commentElement
+        );
+    });
+}
+
+async function addTaskComment(
+    taskId,
+    commentInput,
+    commentList
+) {
+    const comment =
+        commentInput.value.trim();
+
+    if (!comment) {
+        window.alert(
+            "Please enter a comment."
+        );
+
+        return;
+    }
+
+    const commentButton =
+        commentInput
+            .parentElement
+            .querySelector(
+                ".comment-button"
+            );
+
+    commentButton.disabled = true;
+    commentButton.textContent = "Adding...";
+
+    try {
+        const response = await fetch(
+            API.createComment,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    taskId: taskId,
+                    userId: loggedInUser.userId,
+                    userName: loggedInUser.userName,
+                    comment: comment
+                })
+            }
+        );
+
+        const result =
+            await readJsonResponse(response);
+
+        if (!response.ok) {
+            throw new Error(
+                result.message ||
+                "The comment could not be added."
+            );
+        }
+
+        commentInput.value = "";
+
+        await loadTaskComments(
+            taskId,
+            commentList
+        );
+
+    } catch (error) {
+        console.error(
+            "Comment creation error:",
+            error
+        );
+
+        window.alert(error.message);
+
+    } finally {
+        commentButton.disabled = false;
+        commentButton.textContent =
+            "Add Comment";
+    }
 }
 
 // Load notifications

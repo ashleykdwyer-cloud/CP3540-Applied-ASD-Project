@@ -17,6 +17,10 @@ const TaskSchema = mongoose.Schema ({
                         type:String,
                         required: true
                     },
+                    supervisorId: {
+                        type: Number,
+                        required: true
+                    },  
                     status: {
                         type:String,
                         enum: ["Pending", "In Progress", "Completed"],
