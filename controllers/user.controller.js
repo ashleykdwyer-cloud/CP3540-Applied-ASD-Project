@@ -96,9 +96,10 @@ const login = async (req, res) => {
 
         //only return the information the frontend needs
         res.status(200).json({
-            userId: user.userId,
+            userId: user._id,
             userName: user.userName,
-            role: user.role
+            role: user.role,
+            status:user.status
         });
 
     } catch (err) {

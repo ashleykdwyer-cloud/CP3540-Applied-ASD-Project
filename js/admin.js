@@ -152,8 +152,7 @@ const createUser = async () => {
                 passwordHash: password,
                 skillSet: userRole === "worker" ? userSkill : "N/A",
                 status: 'Available',
-                role: userRole,
-                userId: Date.now()
+                role: userRole
             })
         });
 

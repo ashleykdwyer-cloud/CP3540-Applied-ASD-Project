@@ -32,7 +32,7 @@ const createCheckIn = async (req, res) => {
 // GET PENDING CHECK-INS FOR A WORKER
 const getWorkerCheckIns = async (req, res) => {
     try {
-        const workerId = Number(req.params.workerId);
+        const workerId = req.params.workerId;
 
         const checkIns = await CheckIn.find({
             workerId: workerId

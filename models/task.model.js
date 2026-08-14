@@ -10,17 +10,26 @@ const TaskSchema = mongoose.Schema ({
                         required: true
                     },
                     workerId: {
-                        type: Number,
+                        type: String,
+                        required: true
+                    },
+                    supervisorName: {
+                        type:String,
                         required: true
                     },
                     supervisorId: {
                         type: Number,
                         required: true
+                    },  
+                    status: {
+                        type:String,
+                        enum: ["Pending", "In Progress", "Completed"],
+                        default: "Pending"
                     },
                     isCompleted: {
                         type: Boolean,
                         required: true
-                    },
+                    }
                 },
                 { 
                     timestamps: true
