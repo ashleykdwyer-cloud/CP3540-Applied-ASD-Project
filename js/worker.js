@@ -291,7 +291,7 @@ function displayCheckIns() {
 //Start task
 async function startTask(taskId) {
     try {
-        const response = await fetch(`/api/tasks/$(taskId})`, {
+        const response = await fetch(API.updateTask(taskId), {
             method: "PUT",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
@@ -303,7 +303,8 @@ async function startTask(taskId) {
             throw new Error("Failed to start task.");
         }
 
-        await loadDashboardData();
+        await loadTasks();
+        updateSummaryCards();
 
     }
     catch (error) {
@@ -369,10 +370,7 @@ async function completeTask(taskId) {
             );
         }
 
-        await Promise.all([
-            loadTasks(),
-            loadWorkers()
-        ]);
+        await loadTasks();
 
         updateSummaryCards();
 

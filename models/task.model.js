@@ -13,10 +13,6 @@ const TaskSchema = mongoose.Schema ({
                         type: String,
                         required: true
                     },
-                    requiredSkill: {
-                        type:String,
-                        required: true
-                    },
                     supervisorName: {
                         type:String,
                         required: true
