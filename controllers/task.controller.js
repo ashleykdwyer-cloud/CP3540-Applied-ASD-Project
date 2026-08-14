@@ -32,6 +32,25 @@ const updateTaskById = async(req, res) => {
     }
 };
 
+//get tasks assigned to a specific worker
+const getTasksByWorkerId = async (req, res) => {
+    try {
+        const workerId = Number(req.params.workerId);
+        const tasks = await Task.find({
+            workerId: workerId
+        });
+
+        res.status(200).json(tasks);
+
+    } catch (error) {
+        console.error("Error retrieving worker tasks:", error);
+
+        res.status(500).json({
+            message: "Failed to retrieve worker tasks."
+        });
+    }
+};
+
 // delete a task by id
 const deleteTaskById = async(req, res) => {
     try {
@@ -59,5 +78,6 @@ module.exports = {
     getTaskById,
     updateTaskById,
     deleteTaskById,
-    getAllTasks
+    getAllTasks,
+    getTasksByWorkerId
 };

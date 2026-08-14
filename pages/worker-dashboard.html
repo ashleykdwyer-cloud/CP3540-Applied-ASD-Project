@@ -68,9 +68,21 @@
 
             </div>
 
-        </section>
-
         <aside>
+
+            <div class="card">
+
+                <div class="card-header">
+                    <h2>Check-In Requests</h2>
+                </div>
+
+                <div id="checkInList">
+                    <p class="empty-message">
+                        No check-in requests.
+                    </p>
+                </div>
+
+            </div>
 
             <div class="card">
 
@@ -129,6 +141,28 @@
         <div class="notification-card">
             <p class="notification-message"></p>
             <small class="notification-date"></small>
+        </div>
+
+    </template>
+
+    <!-- Check-in Template -->
+
+    <template id="checkInTemplate">
+
+        <div class="checkin-card">
+
+            <div class="checkin-header">
+                <h3>Check-In Request</h3>
+                <span class="checkin-status"></span>
+            </div>
+
+            <p class="checkin-time"></p>
+            <p class="checkin-deadline"></p>
+
+            <button class="checkin-btn">
+                Check In
+            </button>
+
         </div>
 
     </template>

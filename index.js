@@ -4,6 +4,7 @@ const notificationRoute = require("./routes/notification.route.js");
 const taskRoute = require("./routes/task.route.js");
 const timelogRoute = require("./routes/timelog.route.js");
 const userRoute = require("./routes/user.route.js");
+const checkinRoutes = require("./routes/checkin.route.js");
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -20,6 +21,7 @@ app.use("/api/notifications", notificationRoute);
 app.use("/api/tasks", taskRoute);
 app.use("/api/timelogs", timelogRoute);
 app.use("/api/users", userRoute);
+app.use("/api/checkins", checkinRoutes);
 
 mongoose.connect('mongodb+srv://bradleyhowell48_db_user:Password1@home.2funf.mongodb.net/?appName=home', {dbName: 'home'})
     .then(() => {
