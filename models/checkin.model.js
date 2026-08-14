@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 
 const CheckInSchema = mongoose.Schema({
     workerId: {
-        type: Number,
+        type: String,
         required: true
     },
 
     supervisorId: {
-        type: Number,
+        type: String,
         required: true
     },
 

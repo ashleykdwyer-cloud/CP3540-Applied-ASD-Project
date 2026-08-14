@@ -65,8 +65,15 @@ searchTasksInput.addEventListener("input", handleTaskSearch);
 
 logoutButton.addEventListener("click", logout);
 
+requiredSkillSelect.addEventListener("change",populateWorkerSelect);
+
 //Initialize dashboard
 initializeDashboard();
+
+setInterval(async () => {
+    await loadWorkers();
+    updateSummaryCards();
+}, 5000);
 
 async function initializeDashboard() {
     displayLoggedInSupervisor();
@@ -126,10 +133,11 @@ async function loadWorkers() {
 
 //Send a check-in request to a worker
 async function requestCheckIn(workerId) {
-    const supervisorId = Number(loggedInUser.userId);
+    const supervisorId = loggedInUser._id;
 
-    if (!Number.isInteger(workerId)) {
-        window.alert("Invalid worker.");
+    if (!workerId) {
+        showTaskMessage("Select a worker.", "error");
+        workerSelect.focus();
         return;
     }
 
@@ -308,7 +316,7 @@ async function createTask(event) {
 
     const requiredSkill = requiredSkillSelect.value.trim();
 
-    const workerId = Number(workerSelect.value);
+    const workerId = workerSelect.value;
 
     //Validate form value
     if(!Number.isInteger(taskNumber) || taskNumber < 1){
@@ -335,7 +343,7 @@ async function createTask(event) {
         return;
     }
 
-    if(!Number.isInteger(workerId)) {
+    if(!workerId) {
         showTaskMessage("Select a worker.", "error");
 
         workerSelect.focus();
@@ -344,7 +352,7 @@ async function createTask(event) {
     }
 
 //Find the worker
-const selectedWorker = workers.find((worker) => Number(worker.userId) === workerId);
+const selectedWorker = workers.find((worker) => worker._id === workerId);
 
 //Check whether the worker can receive the task
 const eligibility = checkWorkerEligibility(selectedWorker, requiredSkill);
@@ -355,7 +363,7 @@ if (!eligibility.eligible) {
     return;
 }
 
-const newTask = {taskNumber, description, workerId, requiredSkill, isCompleted: false};
+const newTask = {taskNumber, description, workerId, requiredSkill, supervisorName: loggedInUser.userName, status: "Pending", isCompleted: false};
 
 const submitButton = taskForm.querySelector('button[type="submit"]');
 
@@ -433,7 +441,7 @@ function checkWorkerEligibility(
         };
     }
 
-    if (workerHasUnfinishedTask(worker.userId)) {
+    if (workerHasUnfinishedTask(worker._id)) {
         return {
             eligible: false,
             message: `${worker.userName} is already assigned to an active task.`
@@ -919,26 +927,26 @@ function populateWorkerSelect() {
         </option>
     `;
 
-    workers.forEach((worker) => {
-        const option =
-            document.createElement("option");
+    const selectedSkill = normalizeText(requiredSkillSelect.value);
 
-        option.value = worker.userId;
+    if (!selectedSkill) {
+        return;
+    }
 
-        option.textContent = 
-        `${worker.userName} = ` +
-        `${worker.status}`;
+    const matchingWorkers = workers.filter((worker) => {
+            const workerStatus = normalizeText(worker.status);
+            const workerSkill = normalizeText(worker.skillSet);
 
-        const workerStatus = 
-            normalizeText(worker.status);
+            return (
+                workerStatus === "available" &&
+                workerSkill === selectedSkill
+            );
+        });
 
-        if (workerStatus !== "available") {
-            option.disabled = true;
-
-            option.textContent +=
-            " (Unavailable)";
-        }
-
+    matchingWorkers.forEach((worker) => {
+        const option = document.createElement("option");
+        option.value = worker._id;
+        option.textContent = `${worker.name || worker.userName} - ${worker.skillSet}`;
         workerSelect.appendChild(option);
     });
 }
@@ -1205,12 +1213,11 @@ function getWorkerName(workerId) {
     const matchingWorker =
         workers.find(
             (worker) =>
-                Number(worker.userId) ===
-                Number(workerId)
+                worker._id === workerId
         );
 
     if (!matchingWorker) {
-        return `Worker ${workerId}`;
+        return "Unknown Worker";
     }
 
     return matchingWorker.userName;

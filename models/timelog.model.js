@@ -6,7 +6,7 @@ const TimeLogSchema = mongoose.Schema ({
                         required: true
                     },
                     workerId: {
-                        type: Number,
+                        type: String,
                         required: true
                     },
                     startTime: {

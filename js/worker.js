@@ -48,7 +48,7 @@ const checkInList = document.getElementById("checkInList");
 const checkInTemplate = document.getElementById("checkInTemplate")
 
 logoutButton.addEventListener("click", logout);
-//statusSelect.addEventListener("change", updateWorkerStatus);
+statusSelect.addEventListener("change", updateWorkerStatus);
 
 
 initializeDashboard();
@@ -488,7 +488,7 @@ function displayTasks(taskData) {
         
         const taskNumberElement = 
             taskFragment.querySelector(
-                ".task-number"
+                ".task-title"
             );
 
         const taskStatusElement = 
@@ -503,7 +503,7 @@ function displayTasks(taskData) {
 
         const taskWorkerElement =
             taskFragment.querySelector(
-                ".task-worker"
+                ".task-supervisor"
             );
 
         const completeButton =

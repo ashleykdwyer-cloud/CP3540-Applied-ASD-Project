@@ -35,7 +35,7 @@ const updateTaskById = async(req, res) => {
 //get tasks assigned to a specific worker
 const getTasksByWorkerId = async (req, res) => {
     try {
-        const workerId = Number(req.params.workerId);
+        const workerId = req.params.workerId;
         const tasks = await Task.find({
             workerId: workerId
         });
