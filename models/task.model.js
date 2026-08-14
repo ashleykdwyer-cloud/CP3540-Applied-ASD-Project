@@ -13,6 +13,10 @@ const TaskSchema = mongoose.Schema ({
                         type: Number,
                         required: true
                     },
+                    supervisorId: {
+                        type: Number,
+                        required: true
+                    },
                     isCompleted: {
                         type: Boolean,
                         required: true

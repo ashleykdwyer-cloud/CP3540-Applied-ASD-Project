@@ -355,7 +355,10 @@ if (!eligibility.eligible) {
     return;
 }
 
-const newTask = {taskNumber, description, workerId, requiredSkill, isCompleted: false};
+const newTask = {taskNumber, description, workerId, supervisorId: loggedInUser.userId, requiredSkill, isCompleted: false};
+
+console.log("New task being sent:", newTask);
+console.log("Logged-in supervisor:", loggedInUser);
 
 const submitButton = taskForm.querySelector('button[type="submit"]');
 

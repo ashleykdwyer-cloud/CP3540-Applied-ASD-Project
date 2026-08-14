@@ -22,13 +22,25 @@ const getNotificationById = async(req, res) => {
 };
 
 // retrive all notifications for a recipient
-const getNotificationsForRecipient = async(req, res) => {
+const getNotificationsForRecipient = async (req, res) => {
     try {
-        const notifications = await Notification.find({recipientId: req.params.recipientId});
+        console.log("Recipient ID received:", req.params.recipientId);
+
+        const notifications = await Notification.find({
+            recipientId: req.params.recipientId
+        });
+
+        console.log("Notifications found:", notifications);
+
         res.status(200).json(notifications);
+
     }
     catch (err) {
-        res.status(500).json({message: err.message});
+        console.error("Notification retrieval error:", err);
+
+        res.status(500).json({
+            message: err.message
+        });
     }
 };
 

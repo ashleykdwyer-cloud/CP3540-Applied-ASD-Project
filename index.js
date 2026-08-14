@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require("path")
 const notificationRoute = require("./routes/notification.route.js");
+const taskCommentRoute = require("./routes/taskcomment.route.js");
 const taskRoute = require("./routes/task.route.js");
 const timelogRoute = require("./routes/timelog.route.js");
 const userRoute = require("./routes/user.route.js");
@@ -22,6 +23,7 @@ app.use("/api/tasks", taskRoute);
 app.use("/api/timelogs", timelogRoute);
 app.use("/api/users", userRoute);
 app.use("/api/checkins", checkinRoutes);
+app.use("/api/taskcomments", taskCommentRoute);
 
 mongoose.connect('mongodb+srv://bradleyhowell48_db_user:Password1@home.2funf.mongodb.net/?appName=home', {dbName: 'home'})
     .then(() => {
